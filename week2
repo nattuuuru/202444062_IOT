@@ -1,0 +1,105 @@
++-는 가로로 회로 연결
+abcde fghij 는 세로로 회로 연결
++-는 가로 연결이지만 끊겨있을 수 있으니 확인 요망
+가독성 좋게 선은 직각으로 빼는 것이 좋음
+전압선 빨간색, 그라운드선 검은색
+HIGH신호 LED 켜짐 1,LOW 신호 LED 꺼짐 0 (제조사마다 다를 수 있음)
+아날로그는 Write 없음
+초음파 거리센서
+
+-------------------------------------------------------------------
+
+// C++ code
+
+int led_r = 7;
+void setup()
+{
+  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(led_r, OUTPUT);
+}
+
+void loop()
+{
+  digitalWrite(LED_BUILTIN, HIGH);
+   digitalWrite(led_r, HIGH);
+  delay(1000); // Wait for 1000 millisecond(s)
+  digitalWrite(LED_BUILTIN, LOW);
+  digitalWrite(led_r, LOW);
+  delay(1000); // Wait for 1000 millisecond(s)
+}
+
+-------------------------------------------------------------------
+
+
+// C++ code
+
+int led_r = 7;
+int led_g = 9;
+void setup()
+{
+  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(led_r, OUTPUT);
+  pinMode(led_g, OUTPUT);
+}
+
+void loop()
+{
+  digitalWrite(LED_BUILTIN, HIGH);
+  digitalWrite(led_r, HIGH);
+  digitalWrite(led_g, LOW);
+  delay(1000); // Wait for 1000 millisecond(s)
+  
+  digitalWrite(LED_BUILTIN, LOW);
+  digitalWrite(led_r, LOW);
+  digitalWrite(led_g, HIGH);
+  delay(1000); // Wait for 1000 millisecond(s)
+  
+}
+
+------------------------------------------------------------------
+
+
+#define TRIG 12 // TRIG핀
+#define ECHO 11 // ECHO핀
+
+
+int led_r = 7;
+int led_g = 9;
+
+void setup()
+{
+  Serial.begin(9600); // 112,500까지 많이들 사용함.
+  pinMode(led_r, OUTPUT);
+  pinMode(led_g, OUTPUT);
+  pinMode(TRIG, OUTPUT);
+  pinMode(ECHO, INPUT);
+}
+
+void loop()
+{
+  long duration, distance;
+
+  digitalWrite(TRIG, LOW);
+  delayMicroseconds(2); // delat(2)
+  digitalWrite(TRIG, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG, LOW);
+  
+  duration = pulseIn(ECHO, HIGH); // 에코핀이 하이가 지속된 시간을 듀레이션으로 가져옴
+  
+  distance = duration * 17 / 1000; // Cm환산을 위해 /1000
+  Serial.println(duration);
+  Serial.print("\nDIstance");
+  Serial.print(distance);
+  Serial.println(" Cm");
+  
+  digitalWrite(led_r, HIGH);
+  delay(1000); // Wait for 1000 millisecond(s)
+  digitalWrite(led_r, LOW);
+  delay(1000); // Wait for 1000 millisecond(s)
+  digitalWrite(led_g, HIGH);
+  delay(1000); // Wait for 1000 millisecond(s)
+  digitalWrite(led_g, LOW);
+  delay(1000); // Wait for 1000 millisecond(s)
+  
+}
