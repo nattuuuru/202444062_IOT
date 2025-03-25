@@ -1,0 +1,68 @@
+I2C
+  - Intergrated Circuit(IC) : "직접 회로", 반도체 칩을 의미
+  - 시리얼 데이터를 서로 주고받는 SDA선, 일정하게 클럭을 발생시키는 SCL선 (클럭을 동기화)
+  - 127개까지 구성 가능하지만 예약된 것이 15개정도 있어서 실제로 사용 가능한 것은 112개정도
+  - 장점 : 여러 개의 센서를 두 개의 선으로 가능 
+  - 회로를 구성할 때 풀업저항이 필요
+                      ㄴ 풀업저항: I2C 신호선을 기본적으로 HIGH(1)로 유지해주는 역할
+  - SCL 클럭이 HIGH를 유지할 때 데이터 선을 떨구면 스타트, 데이터 선이 하이로 올라가는 순간 스탑
+  - 비트 단위 (1-7이면 2의 7승, 128)
+  - ACK :응답, 데이터 보냄,       NACK : 정상적으로 응답X, 데이터 안 보냄
+  - ACK 신호를 보냈을 때 LOW면 ACK(잘 받음), HIGH면 NACK
+  - 데이터의 특징 : MSB 최상위 비트를 먼저 보낸다
+  - A4 데이터 선, A5 클럭 선
+  - 주소가 0X27로 정해져있음
+  - SS(셀렉트 시그널) : 센서 하나당 핀 하나씩 필요
+
+=================================
+#include <Wire.h>				        // I2C 통신을 위한 기본 라이브러리
+#include <LiquidCrystal_I2C.h>	// I2C LCD 라이브러리
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup(){
+  
+  lcd.init();				    	      // I2C LCD초기화
+  lcd.backlight();				      // 백라이트 켜기
+  lcd.print("lCD init");
+  delay(2000);
+  lcd.clear();
+}
+
+void loop(){
+  
+  lcd.setCursor(16,0);
+  lcd.print("Hello, World!");
+  
+  for (int position = 0; position < 16; position++) {
+    lcd.scrollDisplayLeft();
+    delay(150);
+  }
+}
+==============================================
+// 아두이노 1602 LCD I2C 주소 찾기
+
+#include <Wire.h>				// I2C 통신을 위한 기본 라이브러리
+
+void setup(){
+  
+  Serial.begin(9600);                                 // 시리얼 모니터 시작 (속도 9600 baud)
+  Wire.begin();                                       // I2C 통신 시작
+  Serial.println("I2C Scanner Running...");           // 시작 메시지 출력
+}
+
+void loop(){
+  Serial.println("Scanning...");                      // 검색 시작 메시지 출력
+
+  for (byte address = 1; address < 127; address++) { // I2C 주소 범위 : 0x01 ~ 0x7F (1~127)
+    Wire.beginTransmission(address);                 // 특정 주소로 통신 시작
+    if (Wire.endTransmission() == 0) {                // 응답이 0이 되면 I2C장치가 존재함
+      Serial.print("I2C 장치 발견 : 0X");              // 발견된 장치 주소 출력
+      Serial.println(address, HEX);                   // 16진수(HEX) 형식으로 출력
+      delay(500);                                     // 0.5초 대기(너무 빠르게 반복되지 않도록)
+    }
+  }
+
+  Serial.println("Scan Complete! Retrying in 5 seconds... \n");
+  delay(5000);                                      // 5초 후 다시 검색
+}
