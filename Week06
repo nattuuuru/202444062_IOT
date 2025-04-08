@@ -1,0 +1,55 @@
+pwd         : 현재 내 위치
+ls          : 현재 파일 리스트
+ls -al      : 모든 정보, 파일마다 권한
+mkdir       : 디렉토리 만듦
+cd 파일 이름  : 디렉토리 위치
+cd ..       : 상위 디렉토리로 이동
+I           : 인서트 모드
+ESC         : 커멘드 모드
+:w          : 저장
+:q          :종료
+:wq         :저장하고 종료
+gcc -o 실행파일이름 소스파일 : 컴파일
+빅데이터 : 대량의 정형.반정형.비정형 데이터로부터 의미있는 가치를 추출하고 유용한 결과를 도출하는 기술
+내부 데이터    : 정형 데이터
+외부 데이터    : 비정형
+=====================
+configuration BlinkAppC
+{
+}
+implementaion
+{
+   components MainC, BlinkC, LedsC;
+   components new TimerMillic() as Timer0;
+   
+   BlinkC -> MainC.Boot;
+   
+   BlinkC.Time0 -> Timer0;
+   BlinkC.Leds -> LedsC;
+}
+
+=====================
+#include "Timer.h"
+
+module BlinkC @safe()
+{
+   uses interface Timer<TMilli> as Timer0;
+   uses interface Leds;
+   uses interface Boot;
+}
+implementation
+{
+   event void Boot.booted()
+   {
+      call Timer0.startPeriodic(250);
+   }
+   
+   event void Timer0.fired()
+   {
+      call Leds.led0Toggle();
+   }
+}
+
+=====================
+COMPONENT=BlinkAppc
+include $(MAKERULES)
