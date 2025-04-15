@@ -1,0 +1,110 @@
+static이 붙으면 루프 안에서 계속 기억됨
+블로킹, 논블로킹 방식 알기
+인터럽트 우선순위
+========================
+void setup() {
+  Serial.begin(115200);
+  Serial.println();
+}
+
+void loop() {
+  static unsigned long loopCnt = 0;
+  static unsigned long nextMil = millis() + 1000;
+
+  loopCnt++; // loopCnt = loopCnt + 1;
+  if (millis() > nextMil) {
+    Serial.println(loopCnt);
+    loopCnt = 0;
+  }
+}
+
+=======================
+#include <SimpleTimer.h>
+SimpleTimer timerCnt;
+
+unsigned long loopCnt;
+
+void timerCntFunc() {
+  Serial.println(loopCnt);
+  loopCnt = 0;
+}
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println();
+
+  timerCnt.setInterval(1000, timerCntFunc); // milli-sec, func
+}
+
+void loop() {
+  timerCnt.run();
+  loopCnt++; // loopCnt = loopCnt + 1;
+}
+=======================
+int a1 = 2;
+int a2 = 3;
+int a3;
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println();
+
+  // 아래 a1, a2, a3는 인수(argument)임
+  sum(a1, a2, a3);
+  Serial.println(a3);
+}
+
+void loop() {
+
+}
+
+// 아래 a, b, c는 매개 변수(parameter)임
+void sum(int a, int b, int& c) {
+  c = a + b;
+}
+=========================
+#ifndef LedToggle_h
+#define LedToggle_h
+
+#include "Arduino.h"
+class LesToggle {
+      publc:
+            LedToggle(int pin); // 생성자
+            void toggle();      // LED 상태 토글 
+            
+      private:
+              int _pin;
+              bool _state;
+}; 
+
+#endif
+================================
+cpp
+#include "LedToggle.h"
+
+LedToggle::LedToggle(int pin) {
+_pin = pin;
+_state = false;
+pinMode(_pin, OUTPUT);
+digitalWrite(_pin, LOW);
+}
+
+void LedToggle::toggle() {
+_state = !_state;
+digitalWrite(_pin, _state ? HIGH : LOW);
+}
+
+=============================
+h
+#include <LedToggle.h>
+
+LedToggle led(LED_BUILTIN);
+
+void setup() {
+}
+
+void loop() {
+  led.toggle();
+
+}
+==============================
